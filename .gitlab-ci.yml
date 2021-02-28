@@ -1,0 +1,13 @@
+stages:
+  - deploy
+
+deploy:
+  image: "hub.bilibili.co/lifangzhou/python"
+  stage: deploy
+  script:
+    - devpi use -l http://172.22.33.224/devpi/root/pypi
+    - devpi login root --password=123
+    - devpi use root/dev
+    - devpi upload --no-vcs
+  only:
+    - master

@@ -1,0 +1,13 @@
+syntax = "proto3";
+package proto;
+
+message Cmd { repeated string cmd = 1; }
+
+message Result {
+  string info = 1;
+  string err = 2;
+}
+
+service Proxy {
+  rpc Execute(Cmd) returns (Result) {}
+}

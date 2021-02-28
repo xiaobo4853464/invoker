@@ -1,0 +1,8 @@
+*.pyc
+.pytest_cache
+__pycache__
+*.png
+.vscode
+*.log*
+.mypy_cache
+*.js
