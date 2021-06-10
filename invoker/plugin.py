@@ -171,7 +171,22 @@ def pytest_itemcollected(item: TestCaseFunction):
     if func.__doc__ is not None:
         doc = func.__doc__.strip()
         if doc:
-            desc = doc.splitlines()[0]
+            # 如果没有写注释，按原来的逻辑，取方法名称
+            if hasattr(item, "callspec"):
+                # 参数化中有 desc 字段，优先显示参数化中的注释，否则逐行显示注释
+                if item.callspec.params.get('data') and hasattr(item.callspec.params["data"], "desc"):
+                    desc = item.callspec.params["data"].desc
+                elif item.callspec.indices:
+                    # 兼容mark.parametrize 和数据驱动一起获取数据
+                    kw = list(item.callspec.indices.keys())[0]
+                    docs = doc.splitlines()
+                    base_index = 0
+                    base_desc = docs[base_index]
+                    params_index = item.callspec.indices[kw] + 1
+                    post_desc = docs[params_index if params_index < len(doc.splitlines()) else 0].strip()
+                    desc = f"{base_desc} {post_desc}"
+            else:
+                desc = doc.splitlines()[0]
     if desc:
         raw_id = item._nodeid
         item._nodeid = "{}::{}".format(item._nodeid, desc)
